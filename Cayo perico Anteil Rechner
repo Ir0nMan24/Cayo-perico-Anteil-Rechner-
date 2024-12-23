@@ -1,0 +1,192 @@
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cayo Perico Beute Rechner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-black flex items-center justify-center min-h-screen">
+    <div class="bg-black p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h1 class="text-2xl font-bold mb-6 text-center text-white">Cayo Perico Beute Rechner</h1>
+        <form id="lootForm" class="space-y-4">
+            <div>
+                <label for="mainLoot" class="block text-sm font-medium text-gray-300">Hauptbeute</label>
+                <select id="mainLoot" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-black" required>
+                    <option value="tequila">Tequila</option>
+                    <option value="necklace">Rubinhalskette</option>
+                    <option value="bonds">Inhaberwertpapiere</option>
+                    <option value="diamond">Pinker Diamant</option>
+                    <option value="panther">Panther Statue</option>
+                </select>
+            </div>
+            <div>
+                <label for="paintings" class="block text-sm font-medium text-gray-300">Anzahl der Gemälde</label>
+                <select id="paintings" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-black" required>
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                </select>
+            </div>
+            <div>
+                <label for="goldBars" class="block text-sm font-medium text-gray-300">Anzahl der Goldhaufen</label>
+                <select id="goldBars" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-black" required>
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                </select>
+            </div>
+            <div>
+                <label for="cashStacks" class="block text-sm font-medium text-gray-300">Anzahl der Geldstapel</label>
+                <select id="cashStacks" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-black" required>
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                </select>
+            </div>
+            <div>
+                <label for="difficulty" class="block text-sm font-medium text-gray-300">Schwierigkeitsgrad</label>
+                <select id="difficulty" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-black" required>
+                    <option value="1">Leicht</option>
+                    <option value="2">Schwer</option>
+                </select>
+            </div>
+            <div>
+                <label for="players" class="block text-sm font-medium text-gray-300">Anzahl der Spieler</label>
+                <select id="players" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-black" required>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+            </div>
+            <div id="playerPercentages" class="space-y-2"></div>
+            <div>
+                <button type="submit" class="w-full bg-orange-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">Berechnen</button>
+            </div>
+        </form>
+        <div id="result" class="mt-6 text-center text-lg font-semibold text-gray-300"></div>
+    </div>
+
+    <script>
+        document.getElementById('players').addEventListener('input', function() {
+            const playerCount = parseInt(this.value);
+            const playerPercentagesDiv = document.getElementById('playerPercentages');
+            playerPercentagesDiv.innerHTML = '';
+            if (playerCount === 1) {
+                const playerDiv = document.createElement('div');
+                playerDiv.innerHTML = `
+                    <label for="player1" class="block text-sm font-medium text-gray-300">Spieler 1 Anteil (in %)</label>
+                    <input type="number" id="player1" value="100" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-black" readonly>
+                `;
+                playerPercentagesDiv.appendChild(playerDiv);
+            } else {
+                for (let i = 1; i <= playerCount; i++) {
+                    const playerDiv = document.createElement('div');
+                    playerDiv.innerHTML = `
+                        <label for="player${i}" class="block text-sm font-medium text-gray-300">Spieler ${i} Anteil (in %)</label>
+                        <select id="player${i}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white text-black" required>
+                            <option value="15">15%</option>
+                            <option value="20">20%</option>
+                            <option value="25">25%</option>
+                            <option value="30">30%</option>
+                            <option value="35">35%</option>
+                            <option value="40">40%</option>
+                            <option value="45">45%</option>
+                            <option value="50">50%</option>
+                            <option value="55">55%</option>
+                            <option value="60">60%</option>
+                            <option value="65">65%</option>
+                            <option value="70">70%</option>
+                            <option value="75">75%</option>
+                            <option value="80">80%</option>
+                            <option value="85">85%</option>
+                        </select>
+                    `;
+                    playerPercentagesDiv.appendChild(playerDiv);
+                }
+            }
+        });
+
+        document.getElementById('lootForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const mainLoot = document.getElementById('mainLoot').value;
+            const paintings = parseInt(document.getElementById('paintings').value);
+            const goldBars = parseInt(document.getElementById('goldBars').value);
+            const cashStacks = parseInt(document.getElementById('cashStacks').value);
+            const difficulty = parseFloat(document.getElementById('difficulty').value);
+            const playerCount = parseInt(document.getElementById('players').value);
+            const deductions = 0.1199995; // 11.99995% Abzüge
+
+            const paintingValue = 180000; // Wert für ein Gemälde
+            const goldBarValue = 333000; // Wert für einen Goldhaufen
+            const cashStackValue = 83250; // Wert für einen Geldstapel
+
+            const mainLootValues = {
+                tequila: { light: 630000, hard: 693000 },
+                necklace: { light: 700000, hard: 770000 },
+                bonds: { light: 770000, hard: 847000 },
+                diamond: { light: 1300000, hard: 1430000 },
+                panther: { light: 1900000, hard: 2090000 }
+            };
+
+            const mainLootValue = mainLootValues[mainLoot][difficulty === 1 ? 'light' : 'hard'];
+            const totalLoot = (paintings * paintingValue) + (goldBars * goldBarValue) + (cashStacks * cashStackValue) + mainLootValue;
+            const adjustedLoot = totalLoot * (1 - deductions);
+
+            let totalPercentage = 0;
+            for (let i = 1; i <= playerCount; i++) {
+                totalPercentage += parseFloat(document.getElementById(`player${i}`).value);
+            }
+
+            if (totalPercentage > 100) {
+                alert('Die Anteile der Spieler dürfen zusammen höchstens 100% ergeben.');
+                return;
+            }
+
+            for (let i = 1; i <= playerCount; i++) {
+                const playerPercentage = parseFloat(document.getElementById(`player${i}`).value);
+                if (playerPercentage < 15) {
+                    alert('Kein Spieler darf unter 15% kommen.');
+                    return;
+                }
+            }
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '';
+            for (let i = 1; i <= playerCount; i++) {
+                const playerPercentage = parseFloat(document.getElementById(`player${i}`).value) / totalPercentage;
+                const playerLoot = adjustedLoot * playerPercentage;
+                const playerResult = document.createElement('div');
+                playerResult.textContent = `Spieler ${i} erhält: €${playerLoot.toFixed(2)}`;
+                resultDiv.appendChild(playerResult);
+            }
+        });
+    </script>
+</body>
+</html>
